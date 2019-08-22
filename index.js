@@ -83,22 +83,46 @@ function getParks(query, maxResults=10) {
   const params = {
     stateCode: query,
     api_key: STORE.apiKey,
-    maxResults
+    limit: maxResults
   };
 
   const queryString = formatQueryParams(params);
   const url = STORE.searchURL + '?' + queryString;
   console.log(url);
 
+  fetch(url)
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(response.statusText);
+    })
+    .then(responseJson => displayResults(responseJson))
+    .catch(err => {
+      $('#js-error-message').text(`Something went wrong: ${err.message}`);
+    });  
 }
+
 
 function selectedState() {
   $('form').on('change', e => {
     e.preventDefault();
     const stateAbbreviation = $('select').val();
+    STORE.maxResults = $('.js-num-select').val();
     getParks(stateAbbreviation, STORE.maxResults);
   });
 
+}
+function displayResults(results){
+  $('.search-results').empty();
+  for(let i= 0; i <= 10 && i <= results.data.length; i++){
+    $('.search-results').append(
+      `<li><h3><a href='${results.data[i].url}'> ${results.data[i].fullName}</a></h3>
+      <p>${results.data[i].description}</p>
+      <p>${results.data[i].addresses}</p>
+      </li>`
+    );
+  }
 }
 
 // The user must be able to search for parks in one or more states.
