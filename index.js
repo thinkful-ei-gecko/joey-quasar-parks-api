@@ -107,7 +107,7 @@ function getParks(query, maxResults=10) {
 
 // form drop down event listener - calls getParks when option is selected
 function selectedState() {
-  $('form').on('change', e => {
+  $('form').on('click', e => {
     e.preventDefault();
     const stateAbbreviation = $('select').val();
     STORE.maxResults = $('.js-num-select').val();
