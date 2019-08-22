@@ -83,7 +83,8 @@ function getParks(query, maxResults=10) {
   const params = {
     stateCode: query,
     api_key: STORE.apiKey,
-    limit: maxResults
+    limit: maxResults,
+    fields: "addresses"
   };
 
   const queryString = formatQueryParams(params);
@@ -116,12 +117,18 @@ function selectedState() {
 function displayResults(results){
   $('.search-results').empty();
   for(let i= 0; i <= 10 && i <= results.data.length; i++){
+    
+    let address = results.data[i].addresses.find( address => address.type === 'Physical');
+    console.log(address);
+
     $('.search-results').append(
       `<li><h3><a href='${results.data[i].url}'> ${results.data[i].fullName}</a></h3>
       <p>${results.data[i].description}</p>
-      <p>${results.data[i].addresses}</p>
+      <p>${address.line1}</p>
+      <p>${address.city}, ${address.stateCode}, ${address.postalCode}</p>
       </li>`
     );
+    
   }
 }
 
